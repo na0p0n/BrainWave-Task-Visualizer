@@ -8,12 +8,12 @@ from socket import socket, AF_INET, SOCK_DGRAM
 import TaskManager
 
 #”重要” offLineModeをFalseにすると脳波データの通信が行われるため、UDP通信が起動していない場合にFalseにするとバグ発生の可能性あり
-offLineMode = True
+offLineMode = False
 WIDTH = 2560        #ウィンドウの横サイズ
 HEIGHT = 1440       #ウィンドウの縦サイズ
 TIME = 30000        #タスクの継続時間（ミリ秒）
 BREAK_TIME = 15000  #タスク間の休憩時間（ミリ秒）
-TASK_COUNT = 5      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
+TASK_COUNT = 7      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
 #UDPの準備
 HOST = ''
 PORT = 8001
@@ -111,15 +111,16 @@ def main():
         while True:
             try:
                 get_tick_time[0] = pygame.time.get_ticks()
-                mind = task_manager.get_next_task()
+                mind = task_manager.get_next_type("mind")
                 if mind is None:
                     print("すべてのタスクが完了しました。ウィンドウを閉じて終了してください。")
                     while True:
                         if check_exit(s, choice, process):
                             break
-                choice = random.choice(screen_type)
+                choice = task_manager.get_next_type("task")
                 if choice != "task" and mind == "neutral":
-                    task_manager.sub_counts(mind, 1)
+                    task_manager.sub_counts(mind, choice, 1)
+                    continue
                 
                 if choice == "screen" and mind != "neutral":
                     try:
@@ -185,7 +186,7 @@ def main():
                 
                 #タスク間の休憩
                 get_tick_time[0] = pygame.time.get_ticks()
-                print(f"現在の実行回数: {task_manager.get_counts()}")
+                print(f"現在の実行回数: {task_manager.get_counts()}\nタスク実行回数: {task_manager.get_taskCounts()}")
                 while get_tick_time[1] - get_tick_time[0] <= BREAK_TIME:
                     if check_exit(s, choice, process):
                         break
