@@ -8,7 +8,7 @@ from socket import socket, AF_INET, SOCK_DGRAM
 import TaskManager
 
 #”重要” offLineModeをFalseにすると脳波データの通信が行われるため、UDP通信が起動していない場合にFalseにするとバグ発生の可能性あり
-offLineMode = False 
+offLineMode = True
 WIDTH = 2560        #ウィンドウの横サイズ
 HEIGHT = 1440       #ウィンドウの縦サイズ
 TIME = 30000        #タスクの継続時間（ミリ秒）
@@ -19,6 +19,7 @@ HOST = ''
 PORT = 8001
 #サウンドファイルの指定
 SOUND_DIR = "sounds"
+BLINK_INTERVAL = 1000
 white = (255, 255, 255)
 black = (0, 0, 0)
 screen_type = ["sound", "screen", "task"]
@@ -122,6 +123,8 @@ def main():
                 
                 if choice == "screen" and mind != "neutral":
                     try:
+                        last_blink = pygame.time.get_ticks()
+                        is_visible = True
                         screen.fill(black)
                         #円の描画
                         if mind == "right":
@@ -130,10 +133,20 @@ def main():
                         elif mind == "left":
                             position_rect = (0, 0, WIDTH / 2, HEIGHT)
                             position_circle = (WIDTH / 4, HEIGHT / 2)
-                        screen.fill((255, 255, 0), position_rect)
-                        pygame.draw.circle(screen, (255, 0, 255), position_circle, 150)
-                        pygame.display.update()
+                        
                         while get_tick_time[1] - get_tick_time[0] <= TIME:
+                            current_time = pygame.time.get_ticks()
+                            
+                            if current_time - last_blink >= BLINK_INTERVAL:
+                                is_visible = not is_visible
+                                last_blink = current_time
+                                if is_visible:
+                                    screen.fill(black)
+                                    screen.fill((255, 255, 0), position_rect)
+                                    pygame.draw.circle(screen, (255, 0, 255), position_circle, 150)
+                                else:
+                                    screen.fill(black)
+                                pygame.display.update()
                             send_nouhadata(s, choice, mind, process)
                             if check_exit(s, choice, process):
                                 break

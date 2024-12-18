@@ -21,6 +21,7 @@ class TaskManager:
         ]
         if not available_tasks:
             return None
+        w = [1 / (self.counters["right"] + 1), 1 / (self.counters["left"] + 1), 1 / (self.counters["neutral"] + 1)]
         selected_task = random.choice(available_tasks)
         self.counters[selected_task] += 1
         return selected_task
