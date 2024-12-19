@@ -9,11 +9,13 @@ from socket import socket, AF_INET, SOCK_DGRAM
 import TaskManager
 
 #”重要” offLineModeをFalseにすると脳波データの通信が行われるため、UDP通信が起動していない場合にFalseにするとバグ発生の可能性あり
-offLineMode = True
+offLineMode = False
 WIDTH = 3200        #ウィンドウの横サイズ
 HEIGHT = 1800       #ウィンドウの縦サイズ
 TIME = 30000        #タスクの継続時間（ミリ秒）
 BREAK_TIME = 15000  #タスク間の休憩時間（ミリ秒）
+LONG_BREAK_TIME = 120000 #長めの休憩時間（ミリ秒）
+LONG_BREAK_INTERVAL = 5 #何タスクごとに長めの休憩を取るか
 PREP_TIME = 10000   #各タスクの「慣れ」時間（ミリ秒）
 TASK_COUNT = 10      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
 #UDPの準備
@@ -186,14 +188,22 @@ def main():
                 
                 #画面の更新
                 pygame.display.update()
-                
-                #タスク間の休憩
-                get_tick_time[0] = pygame.time.get_ticks()
-                print(f"現在の実行回数: {task_manager.get_counts()}\nタスク実行回数: {task_manager.get_taskCounts()}")
-                while get_tick_time[1] - get_tick_time[0] <= BREAK_TIME:
-                    if check_exit(s, choice, process):
-                        break
-                    get_tick_time[1] = pygame.time.get_ticks()
+                if task_manager.get_sum_count() % LONG_BREAK_INTERVAL == 0:
+                    #タスク間の休憩(長め)
+                    get_tick_time[0] = pygame.time.get_ticks()
+                    print(f"現在の実行回数: {task_manager.get_counts()}\nタスク実行回数: {task_manager.get_taskCounts()}\n2分間休憩してください。")
+                    while get_tick_time[1] - get_tick_time[0] <= LONG_BREAK_TIME:
+                        if check_exit(s, choice, process):
+                            break
+                        get_tick_time[1] = pygame.time.get_ticks()
+                else:
+                    #タスク間の休憩
+                    get_tick_time[0] = pygame.time.get_ticks()
+                    print(f"現在の実行回数: {task_manager.get_counts()}\nタスク実行回数: {task_manager.get_taskCounts()}")
+                    while get_tick_time[1] - get_tick_time[0] <= BREAK_TIME:
+                        if check_exit(s, choice, process):
+                            break
+                        get_tick_time[1] = pygame.time.get_ticks()
             except SystemExit:
                 pygame.quit()
                 s.close()
