@@ -34,7 +34,7 @@ class TaskManager:
         if not available_tasks:
             return None
         
-        weights = [1 / (counters[task] + 1) for task in available_tasks]
+        weights = [1 / ((counters[task] + 1) ** 2) for task in available_tasks]
         selected_task = random.choices(available_tasks, weights=weights, k=1)[0]
         counters[selected_task] += 1
         return selected_task

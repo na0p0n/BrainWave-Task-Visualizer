@@ -5,15 +5,17 @@ import time
 from pygame.locals import *
 import nouha_recv as bwr
 from socket import socket, AF_INET, SOCK_DGRAM
+
 import TaskManager
 
 #”重要” offLineModeをFalseにすると脳波データの通信が行われるため、UDP通信が起動していない場合にFalseにするとバグ発生の可能性あり
-offLineMode = False
-WIDTH = 2560        #ウィンドウの横サイズ
-HEIGHT = 1440       #ウィンドウの縦サイズ
+offLineMode = True
+WIDTH = 3200        #ウィンドウの横サイズ
+HEIGHT = 1800       #ウィンドウの縦サイズ
 TIME = 30000        #タスクの継続時間（ミリ秒）
 BREAK_TIME = 15000  #タスク間の休憩時間（ミリ秒）
-TASK_COUNT = 7      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
+PREP_TIME = 10000   #各タスクの「慣れ」時間（ミリ秒）
+TASK_COUNT = 10      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
 #UDPの準備
 HOST = ''
 PORT = 8001
@@ -75,7 +77,7 @@ def load_and_play_sound(filename):
 def send_nouhadata(s, choice, mind, process):
     print_text = text_type[choice]
     print("タスク経過時間：", str(get_tick_time[1] - get_tick_time[0]), print_text) 
-    if offLineMode == False:
+    if offLineMode == False and get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
         data, address = s.recvfrom(1024)
         process.Receive_BrainWave(nouha=data, key=mind, address=address)
     get_tick_time[1] = pygame.time.get_ticks()
@@ -124,6 +126,7 @@ def main():
                 
                 if choice == "screen" and mind != "neutral":
                     try:
+                        load_and_play_sound(os.path.join(SOUND_DIR, "画面を注視してください.wav"))
                         last_blink = pygame.time.get_ticks()
                         is_visible = True
                         screen.fill(black)
