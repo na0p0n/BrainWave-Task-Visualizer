@@ -79,9 +79,10 @@ def load_and_play_sound(filename):
 def send_nouhadata(s, choice, mind, process):
     print_text = text_type[choice]
     print("タスク経過時間：", str(get_tick_time[1] - get_tick_time[0]), print_text) 
-    if offLineMode == False and get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+    if offLineMode == False:
         data, address = s.recvfrom(1024)
         process.Receive_BrainWave(nouha=data, key=mind, address=address)
+    
     get_tick_time[1] = pygame.time.get_ticks()
 
 #アプリの終了時の処理
@@ -153,7 +154,8 @@ def main():
                                 else:
                                     screen.fill(black)
                                 pygame.display.update()
-                            send_nouhadata(s, choice, mind, process)
+                            if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                                send_nouhadata(s, choice, mind, process)
                             if check_exit(s, choice, process):
                                 break
                         screen.fill(black)
@@ -168,7 +170,8 @@ def main():
                     if not load_and_play_sound(filename):
                         continue
                     while pygame.mixer.music.get_busy():
-                        send_nouhadata(s, choice, mind, process)
+                        if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                            send_nouhadata(s, choice, mind, process)
                         if check_exit(s, choice, process):
                             break
                     screen.fill(black)
@@ -180,7 +183,8 @@ def main():
                     load_and_play_sound(filename)
                     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {instruction}")
                     while get_tick_time[1] - get_tick_time[0] <= TIME:
-                        send_nouhadata(s, choice, mind, process)
+                        if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                            send_nouhadata(s, choice, mind, process)
                         if check_exit(s, choice, process):
                             break
                     load_and_play_sound(filename = os.path.join(SOUND_DIR, "タスクを終了してください.wav"))
