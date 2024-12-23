@@ -12,12 +12,13 @@ import TaskManager
 offLineMode = False
 WIDTH = 3200        #ウィンドウの横サイズ
 HEIGHT = 1800       #ウィンドウの縦サイズ
-TIME = 30000        #タスクの継続時間（ミリ秒）
-BREAK_TIME = 15000  #タスク間の休憩時間（ミリ秒）
-LONG_BREAK_TIME = 120000 #長めの休憩時間（ミリ秒）
+TIME = 10000        #タスクの継続時間（慣れ時間含む、ミリ秒）
+BREAK_TIME =   #タスク間の休憩時間（ミリ秒）
+LONG_BREAK_TIME = 30000 #長めの休憩時間（ミリ秒）
 LONG_BREAK_INTERVAL = 5 #何タスクごとに長めの休憩を取るか
-PREP_TIME = 10000   #各タスクの「慣れ」時間（ミリ秒）
+PREP_TIME = 3000   #各タスクの「慣れ」時間（ミリ秒）
 TASK_COUNT = 10      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
+TASK = "task"
 #UDPの準備
 HOST = ''
 PORT = 8001
@@ -79,10 +80,21 @@ def load_and_play_sound(filename):
 def send_nouhadata(s, choice, mind, process):
     print_text = text_type[choice]
     print("タスク経過時間：", str(get_tick_time[1] - get_tick_time[0]), print_text) 
-    if offLineMode == False and get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+    if offLineMode == False:
         data, address = s.recvfrom(1024)
         process.Receive_BrainWave(nouha=data, key=mind, address=address)
+    
     get_tick_time[1] = pygame.time.get_ticks()
+
+def take_a_break(s, task_manager, choice, process, time):
+    #タスク間の休憩
+    process.Receive_BrainWave(nouha=0, key="break", address=0)
+    get_tick_time[0] = pygame.time.get_ticks()
+    print(f"現在の実行回数: {task_manager.get_counts()}")
+    while get_tick_time[1] - get_tick_time[0] <= time:
+        if check_exit(s, choice, process):
+            break
+        get_tick_time[1] = pygame.time.get_ticks()
 
 #アプリの終了時の処理
 def check_exit(s, choice, process):
@@ -121,10 +133,11 @@ def main():
                     while True:
                         if check_exit(s, choice, process):
                             break
-                choice = task_manager.get_next_type("task")
-                if choice != "task" and mind == "neutral":
-                    task_manager.sub_counts(mind, choice, 1)
-                    continue
+                # choice = task_manager.get_next_type("task")
+                # if choice != "task" and mind == "neutral":
+                #     task_manager.sub_counts(mind, choice, 1)
+                #     continue
+                choice = TASK
                 
                 if choice == "screen" and mind != "neutral":
                     try:
@@ -153,7 +166,8 @@ def main():
                                 else:
                                     screen.fill(black)
                                 pygame.display.update()
-                            send_nouhadata(s, choice, mind, process)
+                            if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                                send_nouhadata(s, choice, mind, process)
                             if check_exit(s, choice, process):
                                 break
                         screen.fill(black)
@@ -168,7 +182,8 @@ def main():
                     if not load_and_play_sound(filename):
                         continue
                     while pygame.mixer.music.get_busy():
-                        send_nouhadata(s, choice, mind, process)
+                        if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                            send_nouhadata(s, choice, mind, process)
                         if check_exit(s, choice, process):
                             break
                     screen.fill(black)
@@ -180,7 +195,8 @@ def main():
                     load_and_play_sound(filename)
                     print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {instruction}")
                     while get_tick_time[1] - get_tick_time[0] <= TIME:
-                        send_nouhadata(s, choice, mind, process)
+                        if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                            send_nouhadata(s, choice, mind, process)
                         if check_exit(s, choice, process):
                             break
                     load_and_play_sound(filename = os.path.join(SOUND_DIR, "タスクを終了してください.wav"))
@@ -190,20 +206,11 @@ def main():
                 pygame.display.update()
                 if task_manager.get_sum_count() % LONG_BREAK_INTERVAL == 0:
                     #タスク間の休憩(長め)
-                    get_tick_time[0] = pygame.time.get_ticks()
-                    print(f"現在の実行回数: {task_manager.get_counts()}\nタスク実行回数: {task_manager.get_taskCounts()}\n2分間休憩してください。")
-                    while get_tick_time[1] - get_tick_time[0] <= LONG_BREAK_TIME:
-                        if check_exit(s, choice, process):
-                            break
-                        get_tick_time[1] = pygame.time.get_ticks()
+                    take_a_break(process=process, time=LONG_BREAK_TIME)
                 else:
                     #タスク間の休憩
-                    get_tick_time[0] = pygame.time.get_ticks()
-                    print(f"現在の実行回数: {task_manager.get_counts()}\nタスク実行回数: {task_manager.get_taskCounts()}")
-                    while get_tick_time[1] - get_tick_time[0] <= BREAK_TIME:
-                        if check_exit(s, choice, process):
-                            break
-                        get_tick_time[1] = pygame.time.get_ticks()
+                    take_a_break(process=process, time=BREAK_TIME)
+                    
             except SystemExit:
                 pygame.quit()
                 s.close()

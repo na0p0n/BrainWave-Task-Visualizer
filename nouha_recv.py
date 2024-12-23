@@ -30,7 +30,7 @@ waves = []
 attentions = []
 meditations = []
 keys = []
-key_type = {"neutral":0, "left":1, "right":2, "quit":9}
+key_type = {"neutral":0, "left":1, "right":2, "break":5,"quit":9}
 SAVE_DIR = "csvfiles"
 
 #
@@ -79,11 +79,15 @@ class BrainWave_Receive:
             raise
         
     def Receive_BrainWave(self, nouha, key, address):
-        converted_datas = Convert_BrainWave(nouha)
         key = key_type[key]
         if key == 9:
             self.SaveFile()
-        converted_datas.append(key)
+            return
+        elif key == 5:
+            converted_datas = ["Break", "", "", "", "", ""]
+        else:
+            converted_datas = Convert_BrainWave(nouha)
+            converted_datas.append(key)
         # 受信するデータによっていれる配列を変える
         
 
@@ -97,7 +101,10 @@ class BrainWave_Receive:
         elif converted_datas[0] == "Meditation":
             self.meditations.append(converted_datas[1:])
             print(f"\n type: {converted_datas[0]}\n Meditation: {converted_datas[1]}\n key: {converted_datas[2]}\n from: {address}\n")
-        
+        elif converted_datas[0] == "Break":
+            self.waves.append(["", "", "", "", ""])
+            self.attentions.append(["", ""])
+            self.meditations.append(["", ""])
 
     def SaveFile(self):
         #csvファイルの作成

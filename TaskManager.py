@@ -23,18 +23,18 @@ class TaskManager:
             counters = self.taskCounters
             available_types = ["screen", "sound", "task"]
             
-        """
-        現状、rightとleftが目標回数に達する　かつ　task（想像タスク等）が目標に達した際に無限ループになる。
-        そのため、処置としてその際taskの分を他のタスクに割り振る。
-        """
-        if self.counters["right"] == self.target_count and self.counters["left"] == self.target_count and self.taskCounters["task"] == self.target_count:
-            list(counters.values()).index(min(list(counters.values())))
-            available_tasks = [
-                task_type for task_type in available_types 
-                if counters[task_type] < self.target_count
-            ]
-            counters[random.choice(available_tasks)] += 1
-            return "task"
+        # """
+        # 現状、rightとleftが目標回数に達する　かつ　task（想像タスク等）が目標に達した際に無限ループになる。
+        # そのため、処置としてその際taskの分を他のタスクに割り振る。
+        # """
+        # if self.counters["right"] == self.target_count and self.counters["left"] == self.target_count and self.taskCounters["task"] == self.target_count:
+        #     list(counters.values()).index(min(list(counters.values())))
+        #     available_tasks = [
+        #         task_type for task_type in available_types 
+        #         if counters[task_type] < self.target_count
+        #     ]
+        #     counters[random.choice(available_tasks)] += 1
+        #     return "task"
         # すべてのタスクが目標回数に達しているか確認
         if all(count >= self.target_count for count in counters.values()):
             return None  # すべて完了
