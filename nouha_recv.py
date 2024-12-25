@@ -13,7 +13,9 @@ BandPower + Attention + Meditationの同時取得可能
 
 """
 from __future__ import unicode_literals, print_function
-from socket import socket, AF_INET, SOCK_DGRAM
+from socket import 
+
+socket, AF_INET, SOCK_DGRAM
 
 import numpy as np
 import matplotlib.pyplot as plt

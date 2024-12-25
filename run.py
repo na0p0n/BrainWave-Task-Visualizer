@@ -5,18 +5,19 @@ import time
 from pygame.locals import *
 import nouha_recv as bwr
 from socket import socket, AF_INET, SOCK_DGRAM
+import keyboard
 
 import TaskManager
 
 #”重要” offLineModeをFalseにすると脳波データの通信が行われるため、UDP通信が起動していない場合にFalseにするとバグ発生の可能性あり
-offLineMode = False
+offLineMode = True
 WIDTH = 3200        #ウィンドウの横サイズ
 HEIGHT = 1800       #ウィンドウの縦サイズ
-TIME = 10000        #タスクの継続時間（慣れ時間含む、ミリ秒）
-BREAK_TIME =   #タスク間の休憩時間（ミリ秒）
+TIME = 7000        #タスクの継続時間（慣れ時間含む、ミリ秒）
+BREAK_TIME = 8000  #タスク間の休憩時間（ミリ秒）
 LONG_BREAK_TIME = 30000 #長めの休憩時間（ミリ秒）
-LONG_BREAK_INTERVAL = 5 #何タスクごとに長めの休憩を取るか
-PREP_TIME = 3000   #各タスクの「慣れ」時間（ミリ秒）
+LONG_BREAK_INTERVAL = 10 #何タスクごとに長めの休憩を取るか
+PREP_TIME = 2000   #各タスクの「慣れ」時間（ミリ秒）
 TASK_COUNT = 10      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
 TASK = "task"
 #UDPの準備
@@ -41,12 +42,18 @@ instructions = {
         "右手を想像して箸で食べ物を掴んでください。",
         "右手のボタンを押してください。",
         "右手のレバーを操作してください。",
+        "右手を想像してドアノブを回してください。",
+        "右手を想像してボールを投げてください。",
+        "右手を想像して箸で食べ物を掴んでください。",
     ],
     "left": [
         
         "左手を想像して箸で食べ物を掴んでください。",
         "左手のボタンを押してください。",
         "左手のレバーを操作してください。",
+        "左手を想像してドアノブを回してください。",
+        "左手を想像してボールを投げてください。",
+        "左手を想像して箸で食べ物を掴んでください。",
     ],
     "neutral": [
         "目を閉じてリラックスしてください。",
@@ -111,6 +118,12 @@ def check_exit(s, choice, process):
                 sys.exit(1)
     return False
 
+def start(screen):
+    load_and_play_sound(os.path.join(SOUND_DIR, "計測を開始するにはスペースキーを押してください。.wav"))
+    while True:
+        if keyboard.is_pressed("space"):
+            break
+            
 #メイン
 def main():
     try:
@@ -123,9 +136,10 @@ def main():
         screen = initialize_pygame()
         process = bwr.BrainWave_Receive()
         task_manager = TaskManager.TaskManager(TASK_COUNT)
-        
+        start(screen)
         while True:
             try:
+                
                 get_tick_time[0] = pygame.time.get_ticks()
                 mind = task_manager.get_next_type("mind")
                 if mind is None:
@@ -137,7 +151,10 @@ def main():
                 # if choice != "task" and mind == "neutral":
                 #     task_manager.sub_counts(mind, choice, 1)
                 #     continue
-                choice = TASK
+                if mind == "neutral":
+                    choice = "task"
+                else:
+                    choice = TASK
                 
                 if choice == "screen" and mind != "neutral":
                     try:
@@ -170,6 +187,7 @@ def main():
                                 send_nouhadata(s, choice, mind, process)
                             if check_exit(s, choice, process):
                                 break
+                            get_tick_time[1] = pygame.time.get_ticks()
                         screen.fill(black)
                             
                     except pygame.error as e:
@@ -199,6 +217,7 @@ def main():
                             send_nouhadata(s, choice, mind, process)
                         if check_exit(s, choice, process):
                             break
+                        get_tick_time[1] = pygame.time.get_ticks()
                     load_and_play_sound(filename = os.path.join(SOUND_DIR, "タスクを終了してください.wav"))
                     screen.fill(black)
                 
@@ -206,10 +225,10 @@ def main():
                 pygame.display.update()
                 if task_manager.get_sum_count() % LONG_BREAK_INTERVAL == 0:
                     #タスク間の休憩(長め)
-                    take_a_break(process=process, time=LONG_BREAK_TIME)
+                    take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=LONG_BREAK_TIME)
                 else:
                     #タスク間の休憩
-                    take_a_break(process=process, time=BREAK_TIME)
+                    take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=BREAK_TIME)
                     
             except SystemExit:
                 pygame.quit()
