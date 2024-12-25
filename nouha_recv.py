@@ -13,9 +13,7 @@ BandPower + Attention + Meditationの同時取得可能
 
 """
 from __future__ import unicode_literals, print_function
-from socket import 
-
-socket, AF_INET, SOCK_DGRAM
+from socket import socket, AF_INET, SOCK_DGRAM
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -57,16 +55,16 @@ def Convert_BrainWave(data):
             arguments.append("BandPower")
             arguments += list(map(float, msg.params[0].split(";")))
         else:
-            raise ValueError(f"未知のデータ形式： {msg.address}")
+            raise ValueError(f"nouha_recv.py:未知のデータ形式： {msg.address}")
         return arguments
     except osc_message.ParseError:
-        print("OSCメッセージのパースに失敗")
+        print("nouha_recv.py:OSCメッセージのパースに失敗")
         return None
     except ValueError as e:
-        print(f"データ変換エラー： \n{e}")
+        print(f"nouha_recv.py:データ変換エラー： \n{e}")
         return None
     except Exception as e:
-        print(f"予期せぬエラー： \n{e}")
+        print(f"nouha_recv.py:予期せぬエラー： \n{e}")
         return None
     
 class BrainWave_Receive:
@@ -77,7 +75,7 @@ class BrainWave_Receive:
             self.meditations = []
             self.keys = []
         except Exception as e:
-            print(f"初期化エラー： \n{e}")
+            print(f"nouha_recv.py:BrainWave_Receive:__init__:初期化エラー： \n{e}")
             raise
         
     def Receive_BrainWave(self, nouha, key, address):
@@ -86,7 +84,7 @@ class BrainWave_Receive:
             self.SaveFile()
             return
         elif key == 5:
-            converted_datas = ["Break", "", "", "", "", ""]
+            converted_datas = ["Break", "", "", "", "", "", ""]
         else:
             converted_datas = Convert_BrainWave(nouha)
             converted_datas.append(key)
@@ -96,7 +94,7 @@ class BrainWave_Receive:
         if converted_datas[0] == "BandPower":
             self.waves.append(converted_datas[1:])
             print(f"\n type: {converted_datas[0]}\n alpha: {converted_datas[1]}\n beta: {converted_datas[2]}\n theta: {converted_datas[3]}\n delta: {converted_datas[4]}\n gamma: {converted_datas[5]} \n key: {converted_datas[6]}\n from: {address}\n")
-            keys = [row[5] for row in self.waves]
+            #keys = [row[5] for row in self.waves]
         elif converted_datas[0] == "Attention":
             self.attentions.append(converted_datas[1:])
             print(f"\n type: {converted_datas[0]}\n Attention: {converted_datas[1]}\n key: {converted_datas[2]}\n from: {address}\n")
@@ -104,7 +102,7 @@ class BrainWave_Receive:
             self.meditations.append(converted_datas[1:])
             print(f"\n type: {converted_datas[0]}\n Meditation: {converted_datas[1]}\n key: {converted_datas[2]}\n from: {address}\n")
         elif converted_datas[0] == "Break":
-            self.waves.append(["", "", "", "", ""])
+            self.waves.append(["", "", "", "", "", ""])
             self.attentions.append(["", ""])
             self.meditations.append(["", ""])
 
@@ -124,13 +122,13 @@ class BrainWave_Receive:
                             writer = csv.writer(f)
                             writer.writerow(header)
                             writer.writerows(data_list)
-                            print(f"csvファイルの生成に成功しました。ファイル名：{filename}")
+                            print(f"nouha_recv.py:BrainWave_Receive:SaveFile:csvファイルの生成に成功しました。ファイル名：{filename}")
                     except PermissionError:
-                        print(f"ファイル{filename}への書き込み権限がありません。")
+                        print(f"nouha_recv.py:BrainWave_Receive:SaveFile:ファイル{filename}への書き込み権限がありません。")
                     except Exception as e:
-                        print(f"ファイルへの書き込みエラー。\n{e}")
+                        print(f"nouha_recv.py:BrainWave_Receive:SaveFile:ファイルへの書き込みエラー。\n{e}")
         except Exception as e:
-            print(f"保存処理のエラー： \n{e}")
+            print(f"nouha_recv.py:BrainWave_Receive:SaveFile:保存処理のエラー： \n{e}")
 
         # if not len(self.waves) == 0:
         #     with open(r'.\nouhadata_BandPower' + timestamp + ".csv", 'w', newline="") as f:

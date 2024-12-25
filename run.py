@@ -19,13 +19,13 @@ LONG_BREAK_TIME = 30000 #長めの休憩時間（ミリ秒）
 LONG_BREAK_INTERVAL = 10 #何タスクごとに長めの休憩を取るか
 PREP_TIME = 2000   #各タスクの「慣れ」時間（ミリ秒）
 TASK_COUNT = 10      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
-TASK = "task"
+TASK = "sound"
 #UDPの準備
 HOST = ''
 PORT = 8001
 #サウンドファイルの指定
 SOUND_DIR = "sounds"
-BLINK_INTERVAL = 1000
+BLINK_INTERVAL = 500
 white = (255, 255, 255)
 black = (0, 0, 0)
 screen_type = ["sound", "screen", "task"]
@@ -74,9 +74,10 @@ def initialize_pygame():
         sys.exit(1)
 
 #音声・音楽の再生
-def load_and_play_sound(filename):
+def load_and_play_sound(filename,load=True):
     try:
-        pygame.mixer.music.load(filename)
+        if load:
+            pygame.mixer.music.load(filename)
         pygame.mixer.music.play()
     except pygame.error as e:
         print(f"音楽ファイル{filename}の読み込みエラー： \n{e}")
@@ -195,15 +196,42 @@ def main():
                         
                 elif choice == "sound" and mind != "neutral":
                     screen.fill(black)
-                    music_choice = random.choice(musics)
+                    # 音楽ファイルを使う場合の処理
+                    # music_choice = random.choice(musics)
+                    # ここからビープ音を繰り返し流す場合の処理
+                    last_blink = pygame.time.get_ticks()
+                    is_visible = True
+                    music_choice = "beep"
+                    # ここまで
                     filename = os.path.join(SOUND_DIR, music_choice+"_"+mind+".mp3")
                     if not load_and_play_sound(filename):
                         continue
-                    while pygame.mixer.music.get_busy():
+                    while get_tick_time[1] - get_tick_time[0] <= TIME:
+                        # 音楽ファイルを使う場合
+                        # if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
+                        #     send_nouhadata(s, choice, mind, process)
+                        # if check_exit(s, choice, process):
+                        #     break
+                        # get_tick_time[1] = pygame.time.get_ticks()
+                        
+                        # ここからビープ音を繰り返し鳴らす場合
+                        current_time = pygame.time.get_ticks()
+                        
+                        if current_time - last_blink >= BLINK_INTERVAL:
+                            is_visible = not is_visible
+                            last_blink = current_time
+                            if is_visible:
+                                load_and_play_sound(filename, load=False)
+                            else:
+                                pygame.mixer.music.stop()
+                            pygame.display.update()
                         if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
                             send_nouhadata(s, choice, mind, process)
                         if check_exit(s, choice, process):
                             break
+                        get_tick_time[1] = pygame.time.get_ticks()
+                        # ここまで
+                    pygame.mixer.music.stop()
                     screen.fill(black)
                             
                 elif choice == "task":
