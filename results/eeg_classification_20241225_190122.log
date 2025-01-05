@@ -1,0 +1,41 @@
+2024-12-25 19:01:22,332 - INFO - Processing started for file: ./csvfiles/imagine_nouhadata_BandPower2024-12-25,16-32-25-602962.csv
+2024-12-25 19:01:22,332 - INFO - Starting data preprocessing...
+2024-12-25 19:01:22,339 - WARNING - Found 30 rows that need cleaning:
+2024-12-25 19:01:22,340 - WARNING - Row 53: NaN in alpha
+2024-12-25 19:01:22,340 - WARNING - Row 130: NaN in alpha
+2024-12-25 19:01:22,340 - WARNING - Row 207: NaN in alpha
+2024-12-25 19:01:22,340 - WARNING - Row 284: NaN in alpha
+2024-12-25 19:01:22,340 - WARNING - Row 360: NaN in alpha
+2024-12-25 19:01:22,340 - WARNING - Row 436: NaN in alpha
+2024-12-25 19:01:22,340 - WARNING - Row 514: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 591: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 667: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 744: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 930: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 1007: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 1083: NaN in alpha
+2024-12-25 19:01:22,341 - WARNING - Row 1161: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1238: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1315: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1392: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1468: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1546: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1623: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1809: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1886: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 1962: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 2039: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 2115: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 2193: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 2269: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 2346: NaN in alpha
+2024-12-25 19:01:22,342 - WARNING - Row 2423: NaN in alpha
+2024-12-25 19:01:22,343 - WARNING - Row 2500: NaN in alpha
+2024-12-25 19:01:22,343 - INFO - Removed 30 problematic rows. Remaining rows: 2471
+2024-12-25 19:01:22,579 - INFO - Data preprocessing completed
+2024-12-25 19:01:22,580 - INFO - Starting model training and evaluation...
+2024-12-25 19:01:50,454 - INFO - Model training and evaluation completed
+2024-12-25 19:01:50,454 - INFO - Saving results...
+2024-12-25 19:01:50,455 - INFO - Generating plots...
+2024-12-25 21:17:07,365 - INFO - Plot generation completed
+2024-12-25 21:17:07,366 - INFO - All processing completed successfully

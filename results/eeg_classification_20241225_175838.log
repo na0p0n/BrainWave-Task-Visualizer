@@ -1,0 +1,9 @@
+2024-12-25 17:58:38,597 - INFO - Processing started for file: ./csvfiles/imagine_nouhadata_BandPower2024-12-25,16-32-25-602962.csv
+2024-12-25 17:58:38,597 - INFO - Starting data preprocessing...
+2024-12-25 17:58:38,607 - ERROR - An error occurred: Invalid data: Invalid key values found: [nan]
+Traceback (most recent call last):
+  File "E:\NextCloud\Document\pythonFile\main-script.py", line 64, in main
+    processed_data = preprocess_eeg_data(
+  File "E:\NextCloud\Document\pythonFile\preprocessing.py", line 157, in preprocess_eeg_data
+    raise ValueError(f"Invalid data: {message}")
+ValueError: Invalid data: Invalid key values found: [nan]

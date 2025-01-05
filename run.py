@@ -10,16 +10,16 @@ import keyboard
 import TaskManager
 
 #”重要” offLineModeをFalseにすると脳波データの通信が行われるため、UDP通信が起動していない場合にFalseにするとバグ発生の可能性あり
-offLineMode = True
-WIDTH = 3200        #ウィンドウの横サイズ
-HEIGHT = 1800       #ウィンドウの縦サイズ
+offLineMode = False
+WIDTH = 1280        #ウィンドウの横サイズ
+HEIGHT = 720       #ウィンドウの縦サイズ
 TIME = 7000        #タスクの継続時間（慣れ時間含む、ミリ秒）
 BREAK_TIME = 8000  #タスク間の休憩時間（ミリ秒）
 LONG_BREAK_TIME = 30000 #長めの休憩時間（ミリ秒）
 LONG_BREAK_INTERVAL = 10 #何タスクごとに長めの休憩を取るか
 PREP_TIME = 2000   #各タスクの「慣れ」時間（ミリ秒）
 TASK_COUNT = 10      #右、左、ニュートラルそれぞれのタスク数（デフォルトの場合それぞれ5回ずつタスクを実施）
-TASK = "sound"
+TASK = "task"
 #UDPの準備
 HOST = ''
 PORT = 8001
@@ -35,25 +35,42 @@ musics = ["001", "002", "003", "420"]
 position_rect = (0, 0, 0, 0)
 position_circle = (0, 0)
 get_tick_time = [0, 0] #[before, now]
+_count = 0
+task_count = 0
 # 指示内容を定義
+# instructions = {
+#     "right": [
+
+#         "右手を想像して箸で食べ物を掴んでください。",
+#         "右手のボタンを押してください。",
+#         "右手のレバーを操作してください。",
+#         "右手を想像してドアノブを回してください。",
+#         "右手を想像してボールを投げてください。",
+#         "右手を想像して箸で食べ物を掴んでください。",
+#     ],
+#     "left": [
+        
+#         "左手を想像して箸で食べ物を掴んでください。",
+#         "左手のボタンを押してください。",
+#         "左手のレバーを操作してください。",
+#         "左手を想像してドアノブを回してください。",
+#         "左手を想像してボールを投げてください。",
+#         "左手を想像して箸で食べ物を掴んでください。",
+#     ],
+#     "neutral": [
+#         "目を閉じてリラックスしてください。",
+#         "深呼吸をしてください。",
+#         "座禅を組んで瞑想してください。"
+#     ]
+# }
 instructions = {
     "right": [
 
-        "右手を想像して箸で食べ物を掴んでください。",
-        "右手のボタンを押してください。",
-        "右手のレバーを操作してください。",
-        "右手を想像してドアノブを回してください。",
-        "右手を想像してボールを投げてください。",
-        "右手を想像して箸で食べ物を掴んでください。",
+        "右手で手を開く、閉じる動作をしてください。",
     ],
     "left": [
         
-        "左手を想像して箸で食べ物を掴んでください。",
-        "左手のボタンを押してください。",
-        "左手のレバーを操作してください。",
-        "左手を想像してドアノブを回してください。",
-        "左手を想像してボールを投げてください。",
-        "左手を想像して箸で食べ物を掴んでください。",
+        "左手で手を開く、閉じる動作をしてください。",
     ],
     "neutral": [
         "目を閉じてリラックスしてください。",
@@ -86,16 +103,23 @@ def load_and_play_sound(filename,load=True):
 
 #脳波データの受け取りと処理
 def send_nouhadata(s, choice, mind, process):
+    global _count, task_count
     print_text = text_type[choice]
     print("タスク経過時間：", str(get_tick_time[1] - get_tick_time[0]), print_text) 
     if offLineMode == False:
         data, address = s.recvfrom(1024)
-        process.Receive_BrainWave(nouha=data, key=mind, address=address)
+        if task_count < 1:
+            pass
+        else:
+            process.Receive_BrainWave(nouha=data, key=mind, address=address)
+        _count += 1
+        print(_count)
     
     get_tick_time[1] = pygame.time.get_ticks()
 
 def take_a_break(s, task_manager, choice, process, time):
     #タスク間の休憩
+    global task_count
     process.Receive_BrainWave(nouha=0, key="break", address=0)
     get_tick_time[0] = pygame.time.get_ticks()
     print(f"現在の実行回数: {task_manager.get_counts()}")
@@ -103,7 +127,7 @@ def take_a_break(s, task_manager, choice, process, time):
         if check_exit(s, choice, process):
             break
         get_tick_time[1] = pygame.time.get_ticks()
-
+    task_count += 1
 #アプリの終了時の処理
 def check_exit(s, choice, process):
     for event in pygame.event.get():
@@ -140,9 +164,12 @@ def main():
         start(screen)
         while True:
             try:
-                
+                global _count, task_count
+                _count = 0
                 get_tick_time[0] = pygame.time.get_ticks()
                 mind = task_manager.get_next_type("mind")
+                if task_count == 0:
+                    task_manager.reset()
                 if mind is None:
                     print("すべてのタスクが完了しました。ウィンドウを閉じて終了してください。")
                     while True:
@@ -186,6 +213,8 @@ def main():
                                 pygame.display.update()
                             if get_tick_time[1] - get_tick_time[0] >= PREP_TIME:
                                 send_nouhadata(s, choice, mind, process)
+                                count += 1
+                                print(count)
                             if check_exit(s, choice, process):
                                 break
                             get_tick_time[1] = pygame.time.get_ticks()
@@ -251,13 +280,13 @@ def main():
                 
                 #画面の更新
                 pygame.display.update()
-                if task_manager.get_sum_count() % LONG_BREAK_INTERVAL == 0:
-                    #タスク間の休憩(長め)
-                    take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=LONG_BREAK_TIME)
-                else:
-                    #タスク間の休憩
-                    take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=BREAK_TIME)
-                    
+                # if task_manager.get_sum_count() % LONG_BREAK_INTERVAL == 0:
+                #     #タスク間の休憩(長め)
+                #     take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=LONG_BREAK_TIME)
+                # else:
+                #     #タスク間の休憩
+                #     take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=BREAK_TIME)
+                take_a_break(s, task_manager=task_manager, choice=choice, process=process, time=BREAK_TIME)    
             except SystemExit:
                 pygame.quit()
                 s.close()

@@ -1,0 +1,26 @@
+2024-12-25 18:42:11,661 - INFO - Processing started for file: ./csvfiles/imagine_nouhadata_BandPower2024-12-25,16-32-25-602962.csv
+2024-12-25 18:42:11,661 - INFO - Starting data preprocessing...
+2024-12-25 18:42:11,670 - ERROR - An error occurred: 'task_type'
+Traceback (most recent call last):
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexes\base.py", line 3361, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas\_libs\index.pyx", line 76, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\index.pyx", line 108, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5198, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas\_libs\hashtable_class_helper.pxi", line 5206, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'task_type'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\NextCloud\Document\pythonFile\main-script.py", line 65, in main
+    processed_data = preprocess_eeg_data(
+  File "E:\NextCloud\Document\pythonFile\preprocessing.py", line 198, in preprocess_eeg_data
+    is_valid, message, (rows_to_clean, cleaning_reasons) = validate_data(df)
+  File "E:\NextCloud\Document\pythonFile\preprocessing.py", line 34, in validate_data
+    nan_rows = df[col].isna()
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\frame.py", line 3458, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexes\base.py", line 3363, in get_loc
+    raise KeyError(key) from err
+KeyError: 'task_type'

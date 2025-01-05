@@ -1,0 +1,103 @@
+{
+    "svm": {
+        "best_params": {
+            "C": 1,
+            "class_weight": "balanced",
+            "gamma": "scale",
+            "kernel": "rbf"
+        },
+        "cv_results": {
+            "accuracy": 0.41,
+            "f1_macro": 0.2977777777777778,
+            "roc_auc_ovr": 0.4
+        },
+        "test_accuracy": 0.3333333333333333,
+        "classification_report": "              precision    recall  f1-score   support\n\n         0.0       0.25      0.50      0.33         2\n         1.0       1.00      0.50      0.67         2\n         2.0       0.00      0.00      0.00         2\n\n    accuracy                           0.33         6\n   macro avg       0.42      0.33      0.33         6\nweighted avg       0.42      0.33      0.33         6\n",
+        "roc_auc": 0.5,
+        "confusion_matrix": [
+            [
+                1,
+                0,
+                1
+            ],
+            [
+                1,
+                1,
+                0
+            ],
+            [
+                2,
+                0,
+                0
+            ]
+        ]
+    },
+    "random_forest": {
+        "best_params": {
+            "class_weight": "balanced",
+            "max_depth": 10,
+            "min_samples_split": 10,
+            "n_estimators": 300
+        },
+        "cv_results": {
+            "accuracy": 0.42000000000000004,
+            "f1_macro": 0.36222222222222217,
+            "roc_auc_ovr": 0.49444444444444446
+        },
+        "test_accuracy": 0.27777777777777773,
+        "classification_report": "              precision    recall  f1-score   support\n\n         0.0       0.25      0.50      0.33         2\n         1.0       0.50      0.50      0.50         2\n         2.0       0.00      0.00      0.00         2\n\n    accuracy                           0.33         6\n   macro avg       0.25      0.33      0.28         6\nweighted avg       0.25      0.33      0.28         6\n",
+        "roc_auc": 0.20833333333333334,
+        "confusion_matrix": [
+            [
+                1,
+                1,
+                0
+            ],
+            [
+                1,
+                1,
+                0
+            ],
+            [
+                2,
+                0,
+                0
+            ]
+        ]
+    },
+    "xgboost": {
+        "best_params": {
+            "colsample_bytree": 1.0,
+            "learning_rate": 0.01,
+            "max_depth": 3,
+            "min_child_weight": 1,
+            "n_estimators": 300,
+            "subsample": 1.0
+        },
+        "cv_results": {
+            "accuracy": 0.42000000000000004,
+            "f1_macro": 0.3822222222222222,
+            "roc_auc_ovr": 0.4333333333333334
+        },
+        "test_accuracy": 0.27777777777777773,
+        "classification_report": "              precision    recall  f1-score   support\n\n         0.0       0.25      0.50      0.33         2\n         1.0       0.50      0.50      0.50         2\n         2.0       0.00      0.00      0.00         2\n\n    accuracy                           0.33         6\n   macro avg       0.25      0.33      0.28         6\nweighted avg       0.25      0.33      0.28         6\n",
+        "roc_auc": 0.4166666666666667,
+        "confusion_matrix": [
+            [
+                1,
+                1,
+                0
+            ],
+            [
+                1,
+                1,
+                0
+            ],
+            [
+                2,
+                0,
+                0
+            ]
+        ]
+    }
+}

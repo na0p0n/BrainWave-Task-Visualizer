@@ -1,0 +1,58 @@
+2024-12-25 18:45:14,325 - INFO - Processing started for file: ./csvfiles/imagine_nouhadata_BandPower2024-12-25,16-32-25-602962.csv
+2024-12-25 18:45:14,326 - INFO - Starting data preprocessing...
+2024-12-25 18:45:14,333 - WARNING - Found 30 rows that need cleaning:
+2024-12-25 18:45:14,334 - WARNING - Row 53: NaN in alpha
+2024-12-25 18:45:14,334 - WARNING - Row 130: NaN in alpha
+2024-12-25 18:45:14,334 - WARNING - Row 207: NaN in alpha
+2024-12-25 18:45:14,334 - WARNING - Row 284: NaN in alpha
+2024-12-25 18:45:14,334 - WARNING - Row 360: NaN in alpha
+2024-12-25 18:45:14,334 - WARNING - Row 436: NaN in alpha
+2024-12-25 18:45:14,334 - WARNING - Row 514: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 591: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 667: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 744: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 930: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 1007: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 1083: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 1161: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 1238: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 1315: NaN in alpha
+2024-12-25 18:45:14,335 - WARNING - Row 1392: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 1468: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 1546: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 1623: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 1809: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 1886: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 1962: NaN in alpha
+2024-12-25 18:45:14,336 - WARNING - Row 2039: NaN in alpha
+2024-12-25 18:45:14,337 - WARNING - Row 2115: NaN in alpha
+2024-12-25 18:45:14,337 - WARNING - Row 2193: NaN in alpha
+2024-12-25 18:45:14,337 - WARNING - Row 2269: NaN in alpha
+2024-12-25 18:45:14,337 - WARNING - Row 2346: NaN in alpha
+2024-12-25 18:45:14,337 - WARNING - Row 2423: NaN in alpha
+2024-12-25 18:45:14,337 - WARNING - Row 2500: NaN in alpha
+2024-12-25 18:45:14,338 - INFO - Removed 30 problematic rows. Remaining rows: 2471
+2024-12-25 18:45:14,602 - INFO - Data preprocessing completed
+2024-12-25 18:45:14,602 - INFO - Starting model training and evaluation...
+2024-12-25 18:45:42,749 - INFO - Model training and evaluation completed
+2024-12-25 18:45:42,749 - INFO - Saving results...
+2024-12-25 18:45:42,750 - INFO - Generating plots...
+2024-12-25 18:45:42,750 - ERROR - An error occurred: cannot do positional indexing on Int64Index with these indexers [./results\feature_importance_random_forest.png] of type str
+Traceback (most recent call last):
+  File "E:\NextCloud\Document\pythonFile\main-script.py", line 93, in main
+    classifier.plot_feature_importance(
+  File "E:\NextCloud\Document\pythonFile\model_training.py", line 163, in plot_feature_importance
+    importance_df = self.feature_importance[model_name].head(top_n)
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\generic.py", line 5073, in head
+    return self.iloc[:n]
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexing.py", line 931, in __getitem__
+    return self._getitem_axis(maybe_callable, axis=axis)
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexing.py", line 1543, in _getitem_axis
+    return self._get_slice_axis(key, axis=axis)
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexing.py", line 1578, in _get_slice_axis
+    labels._validate_positional_slice(slice_obj)
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexes\base.py", line 3684, in _validate_positional_slice
+    self._validate_indexer("positional", key.stop, "iloc")
+  File "C:\ProgramData\Anaconda3\lib\site-packages\pandas\core\indexes\base.py", line 5719, in _validate_indexer
+    raise self._invalid_indexer(form, key)
+TypeError: cannot do positional indexing on Int64Index with these indexers [./results\feature_importance_random_forest.png] of type str

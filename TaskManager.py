@@ -14,6 +14,18 @@ class TaskManager:
         }
         self.sum_count = 0         # 合計の試行回数
         self.target_count = count  # 各タイプを実行する目標回数
+    def reset(self):
+        self.counters = {
+            "right": 0,
+            "left": 0,
+            "neutral": 0
+        }
+        self.taskCounters = {
+            "screen": 0,
+            "sound": 0,
+            "task": 0
+        }
+        self.sum_count = 0         # 合計の試行回数
 
     def get_next_type(self, mode):
         if mode == "mind":
